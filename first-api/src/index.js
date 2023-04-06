@@ -1,15 +1,13 @@
 const http = require('http')
-const users = require('../mocks/users')
+const routes = require('./routes')
 
 const server = http.createServer((req, res) => {
     console.log("Method: " + req.method + ' | ' + 'Endpoint: ' + req.url )
 
-    if(req.url === '/users' && req.method === 'GET'){
+    const route = routes.find((route) => route.endpoint === req.url && route.method === req.method)
 
-        const response = JSON.stringify(users)
-
-        res.writeHead(200, {'Content-Type':'application/json'})
-        res.end(response)
+    if(route){
+        route.handler(req, res)
     }else{
         res.writeHead(404, {'Content-Type':'text/html'})
         res.end(`Cannot ${req.method} ${req.url}`)
