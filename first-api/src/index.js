@@ -5,14 +5,32 @@ const server = http.createServer((req, res) => {
 
     const parsedUrl = new URL(`http://localhost${req.url}`)
 
-    const route = routes.find((route) => route.endpoint === parsedUrl.pathname && route.method === req.method)
+    let { pathname } = parsedUrl
+
+    let id = null
+
+    const splitEndpoint = pathname.split('/').filter(Boolean)
+
+    if(splitEndpoint.length > 1){
+        pathname = `/${splitEndpoint[0]}/:id`
+        id = splitEndpoint[1]
+    }
+
+    const route = routes.find((route) => route.endpoint === pathname && route.method === req.method)
 
     if(route){
         req.query = Object.fromEntries(parsedUrl.searchParams)
+        req.params = { id }
+
+        res.send = (sttCode, body) => {
+            res.writeHead(sttCode, {'Content-Type':'application/json'})
+            res.end(JSON.stringify(body))
+        }
+
         route.handler(req, res)
     }else{
         res.writeHead(404, {'Content-Type':'text/html'})
-        res.end(`Cannot ${req.method} ${parsedUrl.pathname}`)
+        res.end(`Cannot ${req.method} ${pathname}`)
     }
 })
 

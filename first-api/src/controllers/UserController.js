@@ -16,9 +16,26 @@ module.exports = {
         })
 
 
-        const response = JSON.stringify(sortedUsers)
+        const response = sortedUsers
         
-        res.writeHead(200, {'Content-Type':'application/json'})
-        res.end(response)
+        res.send(200, response)
+    },
+
+    getUserById(req, res){
+        
+        let { id } = req.params
+
+        const user = users.find(user => user.id === Number(id))
+
+        const response = user
+
+        
+        if(!response){
+            const notFoundResponse = {error: `user ${id} not found`}
+
+            res.send(400, notFoundResponse)
+        }
+        
+        res.send(200, response)
     }
 }
