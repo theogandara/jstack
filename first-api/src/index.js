@@ -2,13 +2,9 @@ const http = require('http')
 const routes = require('./routes')
 
 const server = http.createServer((req, res) => {
-
     const parsedUrl = new URL(`http://localhost${req.url}`)
-
     let { pathname } = parsedUrl
-
     let id = null
-
     const splitEndpoint = pathname.split('/').filter(Boolean)
 
     if(splitEndpoint.length > 1){
