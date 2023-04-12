@@ -13,7 +13,6 @@ module.exports = {
         const response = sortedUsers
         res.send(200, response)
     },
-
     getUserById(req, res){
         let { id } = req.params
         const user = users.find(user => user.id === Number(id))
@@ -26,5 +25,27 @@ module.exports = {
         }
         
         res.send(200, response)
+    },
+    createUser(req, res){
+        let body = ''
+        
+        req.on('data', (chunk) => {
+            body += chunk
+        })
+        
+        req.on('end', () => {
+            body = JSON.parse(body)
+
+            users.push({
+                name: body.name,
+                id: users.length + 1
+            })
+
+
+            const response = {'name': body.name}
+            
+            res.send(201, response)
+        })
+
     }
 }
