@@ -1,4 +1,4 @@
-const users = require('../mocks/users')
+let users = require('../mocks/users')
 
 module.exports = {
     listUsers(req, res){
@@ -21,31 +21,68 @@ module.exports = {
         if(!response){
             const notFoundResponse = {error: `user ${id} not found`}
 
-            res.send(400, notFoundResponse)
+            return res.send(400, notFoundResponse)
         }
         
         res.send(200, response)
     },
     createUser(req, res){
-        let body = ''
+        const body = req.body 
+
+        const newUser = {
+            name: body.name,
+            id: users.length + 1
+        }
+
+        users.push(newUser)
+
+        const response = {'name': body.name}
         
-        req.on('data', (chunk) => {
-            body += chunk
-        })
+        res.send(201, response)
         
-        req.on('end', () => {
-            body = JSON.parse(body)
+    },
+    deleteUser(req, res){
+        let { id } = req.params
+        id = Number(id)
 
-            users.push({
-                name: body.name,
-                id: users.length + 1
-            })
+        const userToBeDeleted= users.find(usr => usr.id === id)
 
+        if(!userToBeDeleted){
+            res.send(400, {message: 'User not found'})
+        }
 
-            const response = {'name': body.name}
-            
-            res.send(201, response)
+        users = users.filter(usr => usr.id !== id)
+
+        const response = {ok: `user ${id} was deleted`}
+
+        res.send(200, response)
+    },
+    updateUser(req, res){
+        let { id } = req.params
+        id = Number(id)
+
+        const body = req.body
+        const name = body.name
+
+        const userToBeUpdated = users.find(usr => usr.id === id)
+
+        if(!userToBeUpdated){
+            return res.send(400, {message: 'User not found'})
+        }
+
+        users = users.map((usr) => {
+            if(usr.id === id){
+                return {
+                    ...usr,
+                    name
+                }
+            }
+
+            return usr
         })
 
+        const response = {ok: `user ${id} was update`}
+
+        res.send(200, response)
     }
 }

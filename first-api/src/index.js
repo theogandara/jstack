@@ -1,5 +1,6 @@
 const http = require('http')
 const routes = require('./routes')
+const bodyParser = require('./helpers/bodyParser')
 
 const server = http.createServer((req, res) => {
     const parsedUrl = new URL(`http://localhost${req.url}`)
@@ -23,7 +24,11 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify(body))
         }
 
-        route.handler(req, res)
+        if(['POST', 'PUT'].includes(req.method)){
+            bodyParser(req, () => route.handler(req, res))
+        }else{
+            route.handler(req, res)
+        }
     }else{
         res.writeHead(404, {'Content-Type':'text/html'})
         res.end(`Cannot ${req.method} ${pathname}`)
