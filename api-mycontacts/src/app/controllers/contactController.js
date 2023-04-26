@@ -1,15 +1,15 @@
 const ContactRepository = require('../repositories/contactRepositories');
 
 class ContactController {
+  // listar
   async index(req, res) {
     const contacts = await ContactRepository.findAll();
 
-    // listar
     res.json(contacts);
   }
 
+  // obter UM registro
   async show(req, res) {
-    // obter UM registro
     const { id } = req.params;
 
     const contact = await ContactRepository.findById(id);
@@ -21,16 +21,16 @@ class ContactController {
     return res.json(contact);
   }
 
+  // criar novo registro
   store() {
-    // criar novo registro
   }
 
+  // editar registro
   update() {
-    // editar registro
   }
 
+  // deletar UM registro
   async delete(req, res) {
-    // deletar UM registro
     const { id } = req.params;
 
     const contact = await ContactRepository.findById(id);
