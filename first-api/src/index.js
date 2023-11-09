@@ -4,6 +4,7 @@ const bodyParser = require('./helpers/bodyParser')
 
 const server = http.createServer((req, res) => {
     const parsedUrl = new URL(`http://localhost${req.url}`)
+
     let { pathname } = parsedUrl
     let id = null
     const splitEndpoint = pathname.split('/').filter(Boolean)
@@ -22,7 +23,7 @@ const server = http.createServer((req, res) => {
         res.send = (sttCode, body) => {
             res.writeHead(sttCode, {'Content-Type':'application/json'})
             res.end(JSON.stringify(body))
-        }
+        }       
 
         if(['POST', 'PUT'].includes(req.method)){
             bodyParser(req, () => route.handler(req, res))
